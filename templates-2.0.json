@@ -1064,22 +1064,32 @@
 	  },
 		{
 			"type": 3,
-			"title": "Odoo3",
-			"description": "Wordpress setup with a MySQL database",
-			"note": "Deploys a Wordpress instance connected to a MySQL database.",
+			"title": "Odoo",
+			"description": "Odoo instance",
+			"note": "Deploys your Odoo instance.",
 			"categories": [
-				"CMS"
+				"ERP"
 			],
 			"platform": "linux",
-			"logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/wordpress.png",
+			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
 			"repository": {
 				"url": "https://github.com/nithwith/templates",
 				"stackfile": "stacks/odoo/docker-compose.yml"
 			},
 			"env": [{
-				"name": "MYSQL_DATABASE_PASSWORD",
-				"label": "Database root password",
-				"description": "Password used by the MySQL root user."
+				"name": "VERSION",
+				"label": "Odoo version",
+				"description": "12.0"
+			},
+			{
+				"name": "PROJECT_NAME",
+				"label": "Project name",
+				"description": "Odoo"
+			},
+			{
+				"name": "PROJECT_URL",
+				"label": "Project url",
+				"description": "odoo.yourdomain.com"
 			}]
 		}
 	]
