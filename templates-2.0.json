@@ -1071,19 +1071,9 @@
 			},
 			"env": [
 				{
-				"name": "VERSION",
-				"label": "Odoo version",
-				"description": "12.0",
-				"select": [
-					{
-					  "text": "12.0",
-					  "value": "12.0",
-					},
-					{
-					  "text": "14.0",
-					  "value": "14.0",
-					}
-				  ]
+					"name": "VERSION",
+					"label": "Version",
+					"description": "12.0"
 				},
 				{
 					"name": "PROJECT_NAME",
