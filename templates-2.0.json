@@ -2,30 +2,19 @@
 	"version": "2",
 	"templates": [
 		{
-			"title": "Odoo",
 			"type": 2,
+			"title": "CockroachDB",
+			"description": "CockroachDB cluster",
+			"note": "Deploys an insecure CockroachDB cluster, please refer to <a href=\"https://www.cockroachlabs.com/docs/stable/orchestrate-cockroachdb-with-docker-swarm.html\" target=\"_blank\">CockroachDB documentation</a> for production deployments.",
 			"categories": [
-				"ERP"
+				"database"
 			],
-			"description": "Odoo ERP",
-			"logo": "https://www.ovh.com/fr/cloud-apps/images/2017-11/Odoo_Official_Logo.png",
 			"platform": "linux",
+			"logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/cockroachdb.png",
 			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/odoo/docker-stack.yml"
-			},
-			"env": [{
-					"name": "VERSION",
-					"label": "12.0"
-			},
-			{
-				"name": "PROJECT_NAME",
-				"label": "Odoo"
-			},{
-					"name": "PROJECT_NAME",
-					"label": "odoo.yourdomain.com"
+				"url": "https://github.com/portainer/templates",
+				"stackfile": "stacks/cockroachdb/docker-stack.yml"
 			}
-			]
 		}
 	]
 }
