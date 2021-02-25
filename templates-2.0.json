@@ -1055,13 +1055,6 @@
 	    "note": "Deploys a Wordpress instance connected to a MySQL database.",
 	    "stackfile": "https://raw.githubusercontent.com/portainer/templates/master/stacks/wordpress/edge/docker-stack.yml"
 	  },
-	  {
-	    "type": 4,
-	    "title": "CockroachDB",
-	    "description": "CockroachDB cluster",
-	    "note": "Deploys an insecure CockroachDB cluster, please refer to <a href=\"https://www.cockroachlabs.com/docs/stable/orchestrate-cockroachdb-with-docker-swarm.html\" target=\"_blank\">CockroachDB documentation</a> for production deployments.",
-	    "stackfile": "https://raw.githubusercontent.com/portainer/templates/master/stacks/cockroachdb/edge/docker-stack.yml"
-	  },
 		{
 			"type": 3,
 			"title": "Odoo",
@@ -1076,21 +1069,33 @@
 				"url": "https://github.com/nithwith/templates",
 				"stackfile": "stacks/odoo/docker-compose.yml"
 			},
-			"env": [{
+			"env": [
+				{
 				"name": "VERSION",
 				"label": "Odoo version",
-				"description": "12.0"
-			},
-			{
-				"name": "PROJECT_NAME",
-				"label": "Project name",
-				"description": "Odoo"
-			},
-			{
-				"name": "PROJECT_URL",
-				"label": "Project url",
-				"description": "odoo.yourdomain.com"
-			}]
+				"description": "12.0",
+				"select": [
+					{
+					  "text": "12.0",
+					  "value": "12.0"
+					},
+					{
+					  "text": "14.0",
+					  "value": "14.0",
+					  "default": true
+					}
+				  ]
+				},
+				{
+					"name": "PROJECT_NAME",
+					"label": "Project name",
+					"description": "Odoo"
+				},
+				{
+					"name": "PROJECT_URL",
+					"label": "Project url",
+					"description": "odoo.yourdomain.com"
+				}]
 		}
 	]
 }
