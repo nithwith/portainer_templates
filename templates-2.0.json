@@ -1096,6 +1096,40 @@
 					"label": "Project url",
 					"description": "odoo.yourdomain.com"
 				}]
+		},
+		{
+			"type": 3,
+			"title": "Postgres / Pgadmin",
+			"description": "Postgres instance",
+			"note": "Deploys your postgres instance.",
+			"categories": [
+				"Database"
+			],
+			"platform": "linux",
+			"logo": "",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/postgres/docker-compose.yml"
+			},
+			"env": [
+				{
+					"name": "POSTGRES_PASSWORD",
+					"label": "postgres password",
+				},
+				{
+					"name": "POSTGRES_USER",
+					"label": "postgres user",
+				},{
+					"name": "PGADMIN_USER",
+					"label": "pgadmin user",
+				},{
+					"name": "PGADMIN_PASSWORD",
+					"label": "pgadmin password",
+				},{
+					"name": "DOMAIN",
+					"label": "domain",
+				}
+			]
 		}
 	]
 }

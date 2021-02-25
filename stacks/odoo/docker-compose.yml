@@ -10,11 +10,13 @@ services:
     command: ./odoo-bin -c /opt/odoo.conf --load-language=fr_FR --language=fr_FR
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`) "
-      - "traefik.http.routers.${PROJECT_NAME}_web.service=${PROJECT_NAME}_web"
-      - "traefik.http.services.${PROJECT_NAME}_web.loadbalancer.server.port=8069"
-      - "traefik.http.routers.${PROJECT_NAME}_poll.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
-      - "traefik.http.routers.${PROJECT_NAME}_poll.service=${PROJECT_NAME}_poll"
-      - "traefik.http.services.${PROJECT_NAME}_poll.loadbalancer.server.port=8072"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers${PROJECT_NAME}_web_secure.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}_web_secure.rule=Host(`${PROJECT_URL}`) "
+      - "traefik.http.routers.${PROJECT_NAME}_web_secure.service=${PROJECT_NAME}_web"
+      - "traefik.http.services.${PROJECT_NAME}_web_secure.loadbalancer.server.port=8069"
+      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
+      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.service=${PROJECT_NAME}_poll"
+      - "traefik.http.services.${PROJECT_NAME}_poll_secure.loadbalancer.server.port=8072"
     external_links:
       - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
