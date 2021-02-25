@@ -1,0 +1,20 @@
+version: '3'
+services:
+  odoo:
+    image: nithwith/odoo:${VERSION}
+    volumes:
+      - /home/docker/${PROJECT_NAME}/data:/opt/data
+      - /home/docker/${PROJECT_NAME}/config/odoo.cfg:/opt/odoo.conf
+      - /home/docker/${PROJECT_NAME}/addons:/opt/addons
+      - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
+    command: ./odoo-bin -c /opt/odoo.conf --load-language=fr_FR --language=fr_FR
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`) "
+      - "traefik.http.routers.${PROJECT_NAME}_web.service=${PROJECT_NAME}_web"
+      - "traefik.http.services.${PROJECT_NAME}_web.loadbalancer.server.port=8069"
+      - "traefik.http.routers.${PROJECT_NAME}_poll.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
+      - "traefik.http.routers.${PROJECT_NAME}_poll.service=${PROJECT_NAME}_poll"
+      - "traefik.http.services.${PROJECT_NAME}_poll.loadbalancer.server.port=8072"
+    external_links:
+      - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
