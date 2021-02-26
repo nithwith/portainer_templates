@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db:
+  ${PROJECT_NAME}_db:
     container_name: ${PROJECT_NAME}_db
     image: postgres:12.4
     restart: always
@@ -13,7 +13,7 @@ services:
       - "traefik.enable=false"
     volumes:
       - postgres:/var/lib/postgresql/data
-  odoo:
+  ${PROJECT_NAME}_odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
     volumes:
@@ -21,6 +21,8 @@ services:
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf
+    links:
+      - ${PROJECT_NAME}_db:db
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
