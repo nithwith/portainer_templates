@@ -24,16 +24,21 @@ services:
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
       - traefik.http.routers.${PROJECT_NAME}_web.entrypoints=web
       - traefik.http.routers.${PROJECT_NAME}_web.service=${PROJECT_NAME}_web
+      - traefik.http.services.${PROJECT_NAME}_web.loadbalancer.server.port=8069
       - traefik.http.routers.${PROJECT_NAME}_websecure.rule=Host(`${PROJECT_URL}`)
       - traefik.http.routers.${PROJECT_NAME}_websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}_websecure.service=${PROJECT_NAME}_websecure
-      - traefik.http.routers.${PROJECT_NAME}_poll_websecure.rule= Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)
+      - traefik.http.routers.${PROJECT_NAME}_websecure.middlewares=gzip
+      - traefik.http.services.${PROJECT_NAME}_websecure.loadbalancer.server.port=8069
+      - traefik.http.routers.${PROJECT_NAME}_poll_websecure.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)
       - traefik.http.routers.${PROJECT_NAME}_poll_websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}_poll_websecure.service=${PROJECT_NAME}_poll_websecure
-      - traefik.http.routers.${PROJECT_NAME}_websecure.middlewares=compress
-      - traefik.http.routers.${PROJECT_NAME}_poll_websecure.middlewares=compress
-      - traefik.http.services.${PROJECT_NAME}_web.loadbalancer.server.port=8069
+      - traefik.http.routers.${PROJECT_NAME}_poll_websecure.middlewares=gzip,sslheader
       - traefik.http.services.${PROJECT_NAME}_poll_websecure.loadbalancer.server.port=8072
+
+      # middlewares
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
       - traefik:${PROJECT_URL} #FOR CSS IN REPORTS
 
