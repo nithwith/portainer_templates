@@ -1,15 +1,18 @@
 version: '3'
 services:
   db:
-    container_name: db
-    image: postgres:12.3-alpine
+    container_name: ${PROJECT_NAME}_db
+    image: postgres:12.4
     restart: always
     environment:
       POSTGRES_PASSWORD: odoo
       POSTGRES_USER: odoo
+    labels:
+      - "traefik.enable=false"
     volumes:
       - postgres:/var/lib/postgresql/data
   odoo:
+    container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${VERSION}
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
