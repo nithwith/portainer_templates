@@ -963,7 +963,7 @@
 		},
 		{
 			"type": 3,
-			"title": "Wordpress",
+			"title": "Wordpress3",
 			"description": "Wordpress setup with a MySQL database",
 			"note": "Deploys a Wordpress instance connected to a MySQL database.",
 			"categories": [
