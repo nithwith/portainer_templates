@@ -5,7 +5,7 @@ services:
     image: postgres:12.4
     restart: always
     ports:
-      - ${PG_PORT}':5432'
+      - '5432:5432'
     environment:
       POSTGRES_PASSWORD: odoo
       POSTGRES_USER: odoo
@@ -21,8 +21,6 @@ services:
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf --POSTGRES_HOST=${PROJECT_NAME}_db
-    links:
-      - db:db
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
