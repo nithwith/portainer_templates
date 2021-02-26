@@ -35,8 +35,6 @@ services:
       - traefik.http.routers.${PROJECT_NAME}_poll_websecure.service=${PROJECT_NAME}_poll_websecure
       - traefik.http.routers.${PROJECT_NAME}_poll_websecure.middlewares=gzip,sslheader
       - traefik.http.services.${PROJECT_NAME}_poll_websecure.loadbalancer.server.port=8072
-      - traefik.http.services.${PROJECT_NAME}_poll_websecure.tls=true
-      - traefik.http.services.${PROJECT_NAME}_poll_websecure.certresolver.tls=letsencrypt
 
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
