@@ -5,8 +5,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-    networks:
-      - proxy
     volumes:
       - ./pgadmin_data:/pgadmin
     deploy:
