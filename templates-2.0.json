@@ -1,36 +1,6 @@
 {
 	"version": "2",
 	"templates": [{
-			"type": 3,
-			"title": "Odoo",
-			"description": "Odoo instance with postgres",
-			"note": "Deploys your Odoo instance with postgres.",
-			"categories": [
-				"ERP"
-			],
-			"platform": "linux",
-			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/odoo/docker-compose.yml"
-			},
-			"env": [{
-				"name": "VERSION",
-				"label": "Odoo version",
-				"description": "12.0"
-			},
-			{
-				"name": "PROJECT_NAME",
-				"label": "Project name",
-				"description": "Odoo"
-			},
-			{
-				"name": "PROJECT_URL",
-				"label": "Project url",
-				"description": "odoo.yourdomain.com"
-			}]
-		},
-		{
 			"type": 1,
 			"title": "Registry",
 			"description": "Docker image registry",
@@ -993,7 +963,7 @@
 		},
 		{
 			"type": 3,
-			"title": "Wordpress3",
+			"title": "Wordpress",
 			"description": "Wordpress setup with a MySQL database",
 			"note": "Deploys a Wordpress instance connected to a MySQL database.",
 			"categories": [
@@ -1092,6 +1062,35 @@
 	    "note": "Deploys an insecure CockroachDB cluster, please refer to <a href=\"https://www.cockroachlabs.com/docs/stable/orchestrate-cockroachdb-with-docker-swarm.html\" target=\"_blank\">CockroachDB documentation</a> for production deployments.",
 	    "stackfile": "https://raw.githubusercontent.com/portainer/templates/master/stacks/cockroachdb/edge/docker-stack.yml"
 	  },
-
+		{
+			"type": 3,
+			"title": "Odoo",
+			"description": "Odoo instance with postgres",
+			"note": "Deploys your Odoo instance with postgres.",
+			"categories": [
+				"ERP"
+			],
+			"platform": "linux",
+			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/odoo/docker-compose.yml"
+			},
+			"env": [{
+				"name": "VERSION",
+				"label": "Odoo version",
+				"description": "12.0"
+			},
+			{
+				"name": "PROJECT_NAME",
+				"label": "Project name",
+				"description": "Odoo"
+			},
+			{
+				"name": "PROJECT_URL",
+				"label": "Project url",
+				"description": "odoo.yourdomain.com"
+			}]
+		}
 	]
 }
