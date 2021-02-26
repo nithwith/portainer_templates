@@ -31,4 +31,4 @@ services:
       - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
 
 volumes:
-    postgres
+    postgres:
