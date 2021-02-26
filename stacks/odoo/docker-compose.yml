@@ -18,7 +18,7 @@ services:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db
+    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
