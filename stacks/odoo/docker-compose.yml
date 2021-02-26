@@ -25,7 +25,7 @@ services:
       - "traefik.docker.network=proxy"
       - "traefik.http.routers${PROJECT_NAME}_web_secure.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}_web_secure.rule=Host(`${PROJECT_URL}`) "
-      - "traefik.http.routers.${PROJECT_NAME}_web_secure.service=${PROJECT_NAME}_web"
+      - "traefik.http.routers.${PROJECT_NAME}_web_secure.service=${PROJECT_NAME}_web_secure"
       - "traefik.http.services.${PROJECT_NAME}_web_secure.loadbalancer.server.port=8069"
       - "traefik.http.routers.${PROJECT_NAME}_poll_secure.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
       - "traefik.http.routers.${PROJECT_NAME}_poll_secure.service=${PROJECT_NAME}_poll"
