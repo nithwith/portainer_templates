@@ -4,8 +4,8 @@
 		{
 			"type": 3,
 			"title": "Odoo",
-			"description": "Odoo instance with postgres",
-			"note": "Deploys your Odoo instance with postgres.",
+			"description": "Odoo instance",
+			"note": "Deploys your Odoo instance.",
 			"categories": [
 				"ERP"
 			],

@@ -1,6 +1,6 @@
 version: '3'
+services:
   odoo:
-    container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
