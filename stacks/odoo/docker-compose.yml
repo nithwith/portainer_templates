@@ -21,6 +21,7 @@ services:
       - /home/docker/${PROJECT_NAME}/config/odoo.cfg:/opt/config
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
+    command: ./odoo-bin -c /opt/config/odoo.cfg --load-language=fr_FR --language=fr_FR
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
@@ -42,7 +43,7 @@ services:
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
-      - traefik:${PROJECT_URL} #FOR CSS IN REPORTS
+      - "traefik:${PROJECT_NAME}" #FOR CSS IN REPORTS
 
 volumes:
     postgres:
