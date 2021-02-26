@@ -18,7 +18,6 @@ services:
     image: nithwith/odoo:${VERSION}
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
-      - /home/docker/${PROJECT_NAME}/config:/opt/config
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf --load-language=fr_FR --language=fr_FR
@@ -43,7 +42,7 @@ services:
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
-      - "traefik:${PROJECT_NAME}" #FOR CSS IN REPORTS
+      - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
 
 volumes:
     postgres:
