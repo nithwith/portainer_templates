@@ -21,7 +21,7 @@ services:
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/${PROJECT_NAME}/config:/opt/config
       - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --load-language=fr_FR --language=fr_FR
+    command: ./odoo-bin -c /opt/config/odoo.conf --load-language=fr_FR --language=fr_FR -i base
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
