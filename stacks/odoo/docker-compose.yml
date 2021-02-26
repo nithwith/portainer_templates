@@ -21,15 +21,30 @@ services:
       - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/odoo.conf --load-language=fr_FR --language=fr_FR
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers${PROJECT_NAME}_web_secure.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}_web_secure.rule=Host(`${PROJECT_URL}`) "
-      - "traefik.http.routers.${PROJECT_NAME}_web_secure.service=${PROJECT_NAME}_web_secure"
-      - "traefik.http.services.${PROJECT_NAME}_web_secure.loadbalancer.server.port=8069"
-      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
-      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.service=${PROJECT_NAME}_poll_secure"
-      - "traefik.http.services.${PROJECT_NAME}_poll_secure.loadbalancer.server.port=8072"
+      - traefik.enable=true
+      - traefik.http.routers.odoo-http.rule=Host(`${PROJECT_URL}`)
+      - traefik.http.routers.odoo-http.entrypoints=http
+      - traefik.http.routers.odoo-http.service=odoo-http
+      - traefik.http.services.odoo-http.loadbalancer.server.port=8069
+      - traefik.http.routers.odoo-http.middlewares=redirect@file
+      - traefik.http.routers.odoo-https.rule=Host(`${PROJECT_URL}`)
+      - traefik.http.routers.odoo-https.entrypoints=https
+      - traefik.http.routers.odoo-https.service=odoo-https
+      - traefik.http.routers.odoo-https.tls.certresolver=le
+      - traefik.http.routers.odoo-https.middlewares=gzip
+      - traefik.http.services.odoo-https.loadbalancer.server.port=8069
+
+      #====> On the next line was my mistake. It was typo as pointed out by @Veikko
+      - traefik.http.routers.odoo-im-https.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`))
+      - traefik.http.routers.odoo-im-https.entrypoints=https
+      - traefik.http.routers.odoo-im-https.service=odoo-im-https
+      - traefik.http.routers.odoo-im-https.tls.certresolver=le
+      - traefik.http.routers.odoo-im-https.middlewares=gzip,sslheader
+      - traefik.http.services.odoo-im-https.loadbalancer.server.port=8072
+
+      # middlewares
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
       - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
 
