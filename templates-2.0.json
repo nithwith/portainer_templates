@@ -4,8 +4,8 @@
 		{
 			"type": 3,
 			"title": "Odoo",
-			"description": "Odoo instance",
-			"note": "Deploys your Odoo instance.",
+			"description": "Odoo instance with postgres ",
+			"note": "Deploys your Odoo instance with postgres.",
 			"categories": [
 				"ERP"
 			],
@@ -30,21 +30,6 @@
 				"label": "Project url",
 				"description": "odoo.yourdomain.com"
 			}]
-		},
-		{
-			"type": 3,
-			"title": "Postgres",
-			"description": "Postgres instance ",
-			"note": "Deploys your postgres",
-			"categories": [
-				"database"
-			],
-			"platform": "linux",
-			"logo": "https://dwglogo.com/wp-content/uploads/2017/09/1500px-Postgresql_logo.png",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/postgres/docker-compose.yml"
-			}
 		},
 		{
 			"type": 3,
