@@ -7,8 +7,6 @@ services:
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf --db-filter=${PROJECT_NAME}.*
-    links:
-      - postgres:db
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}_web.rule=Host(`${PROJECT_URL}`)
