@@ -18,7 +18,7 @@ services:
     image: nithwith/odoo:${VERSION}
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
-      - /home/docker/${PROJECT_NAME}/config/odoo.cfg:/opt/config/odoo.conf
+      - /home/docker/${PROJECT_NAME}/config/odoo.cfg:/opt/config
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf --load-language=fr_FR --language=fr_FR
