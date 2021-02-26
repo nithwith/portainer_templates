@@ -35,7 +35,7 @@ services:
 
       - traefik.http.routers.${PROJECT_NAME}_websecure.middlewares=compress
       - traefik.http.routers.${PROJECT_NAME}_poll_websecure.middlewares=compress
-      -
+
       - traefik.http.services.${PROJECT_NAME}_web.loadbalancer.server.port=8069
       - traefik.http.services.${PROJECT_NAME}_poll_websecure.loadbalancer.server.port=8072
     external_links:
