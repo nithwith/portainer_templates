@@ -28,7 +28,7 @@ services:
       - "traefik.http.routers.${PROJECT_NAME}_web_secure.service=${PROJECT_NAME}_web_secure"
       - "traefik.http.services.${PROJECT_NAME}_web_secure.loadbalancer.server.port=8069"
       - "traefik.http.routers.${PROJECT_NAME}_poll_secure.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/longpolling`)`)"
-      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.service=${PROJECT_NAME}_poll"
+      - "traefik.http.routers.${PROJECT_NAME}_poll_secure.service=${PROJECT_NAME}_poll_secure"
       - "traefik.http.services.${PROJECT_NAME}_poll_secure.loadbalancer.server.port=8072"
     external_links:
       - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
