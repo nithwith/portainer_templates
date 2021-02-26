@@ -44,18 +44,7 @@
 			"repository": {
 				"url": "https://github.com/nithwith/templates",
 				"stackfile": "stacks/postgres/docker-compose.yml"
-			},
-			"env": [
-			{
-				"name": "POSTGRES_USER",
-				"label": "user",
-				"description": "Odoo"
-			},
-			{
-				"name": "POSTGRES_PASSWORD",
-				"label": "password",
-				"description": "odoo"
-			}]
+			}
 		},
 		{
 			"type": 3,
