@@ -22,25 +22,23 @@ services:
     command: ./odoo-bin -c /opt/odoo.conf --load-language=fr_FR --language=fr_FR
     labels:
       - traefik.enable=true
-      - traefik.http.routers.odoo-http.rule=Host(`${PROJECT_URL}`)
-      - traefik.http.routers.odoo-http.entrypoints=http
-      - traefik.http.routers.odoo-http.service=odoo-http
-      - traefik.http.services.odoo-http.loadbalancer.server.port=8069
-      - traefik.http.routers.odoo-http.middlewares=redirect@file
-      - traefik.http.routers.odoo-https.rule=Host(`${PROJECT_URL}`)
-      - traefik.http.routers.odoo-https.entrypoints=https
-      - traefik.http.routers.odoo-https.service=odoo-https
-      - traefik.http.routers.odoo-https.tls.certresolver=le
-      - traefik.http.routers.odoo-https.middlewares=gzip
-      - traefik.http.services.odoo-https.loadbalancer.server.port=8069
-
-      #====> On the next line was my mistake. It was typo as pointed out by @Veikko
-      - traefik.http.routers.odoo-im-https.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`))
-      - traefik.http.routers.odoo-im-https.entrypoints=https
-      - traefik.http.routers.odoo-im-https.service=odoo-im-https
-      - traefik.http.routers.odoo-im-https.tls.certresolver=le
-      - traefik.http.routers.odoo-im-https.middlewares=gzip,sslheader
-      - traefik.http.services.odoo-im-https.loadbalancer.server.port=8072
+      - traefik.http.routers.odoo-web.rule=Host(`${PROJECT_URL}`)
+      - traefik.http.routers.odoo-web.entrypoints=web
+      - traefik.http.routers.odoo-web.service=odoo-web
+      - traefik.http.services.odoo-web.loadbalancer.server.port=8069
+      - traefik.http.routers.odoo-web.middlewares=redirect@file
+      - traefik.http.routers.odoo-websecure.rule=Host(`${PROJECT_URL}`)
+      - traefik.http.routers.odoo-websecure.entrypoints=websecure
+      - traefik.http.routers.odoo-websecure.service=odoo-websecure
+      - traefik.http.routers.odoo-websecure.tls.certresolver=le
+      - traefik.http.routers.odoo-websecure.middlewares=gzip
+      - traefik.http.services.odoo-websecure.loadbalancer.server.port=8069
+      - traefik.http.routers.odoo-im-websecure.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`))
+      - traefik.http.routers.odoo-im-websecure.entrypoints=websecure
+      - traefik.http.routers.odoo-im-websecure.service=odoo-im-websecure
+      - traefik.http.routers.odoo-im-websecure.tls.certresolver=le
+      - traefik.http.routers.odoo-im-websecure.middlewares=gzip,sslheader
+      - traefik.http.services.odoo-im-websecure.loadbalancer.server.port=8072
 
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
