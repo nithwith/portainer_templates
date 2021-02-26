@@ -1,18 +1,4 @@
 version: '3'
-services:
-  db:
-    container_name: ${PROJECT_NAME}_db
-    image: postgres:12.4
-    restart: always
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_PASSWORD: odoo
-      POSTGRES_USER: odoo
-    labels:
-      - "traefik.enable=false"
-    volumes:
-      - postgres:/var/lib/postgresql/data
   odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
@@ -20,7 +6,7 @@ services:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf
+    command: ./odoo-bin -c /opt/config/odoo.conf --db-filter=${PROJECT_NAME}.*
     links:
       - db:db
     labels:
@@ -45,9 +31,6 @@ services:
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
       - "traefik:${PROJECT_URL}" #FOR CSS IN REPORTS
-
-volumes:
-    postgres:
 
 networks:
   default:

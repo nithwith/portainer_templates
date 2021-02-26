@@ -33,6 +33,32 @@
 		},
 		{
 			"type": 3,
+			"title": "Postgres",
+			"description": "Postgres instance ",
+			"note": "Deploys your postgres",
+			"categories": [
+				"database"
+			],
+			"platform": "linux",
+			"logo": "https://dwglogo.com/wp-content/uploads/2017/09/1500px-Postgresql_logo.png",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/postgres/docker-compose.yml"
+			},
+			"env": [
+			{
+				"name": "POSTGRES_USER",
+				"label": "user",
+				"description": "Odoo"
+			},
+			{
+				"name": "POSTGRES_PASSWORD",
+				"label": "password",
+				"description": "odoo"
+			}]
+		},
+		{
+			"type": 3,
 			"title": "Pgadmin",
 			"description": "Pgadmin instance",
 			"note": "Deploys your Pgadmin instance.",
