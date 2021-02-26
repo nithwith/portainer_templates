@@ -1,0 +1,30 @@
+version: '3'
+services:
+  pgadmin4:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    networks:
+      - proxy
+    volumes:
+      - ./pgadmin_data:/pgadmin
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.pgadmin4-http.entrypoints=web"
+        - "traefik.http.routers.pgadmin4-http.rule=Host(`${PGADMIN_URL}`)"
+        - "traefik.http.routers.pgadmin4.entrypoints=websecure"
+        - "traefik.http.routers.pgadmin4.rule=Host(`pgadmin.aymconsultores.es`)"
+        - "traefik.http.routers.pgadmin4-http.middlewares=pgadmin4-https@docker"
+        - "traefik.http.middlewares.pgadmin4-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.pgadmin4.tls=true"
+        - "traefik.http.routers.pgadmin4.tls.certresolver=le"
+        - "traefik.http.services.pgadmin4.loadbalancer.server.port=80"
+
+networks:
+  default:
+    external:
+      name: proxy

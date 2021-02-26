@@ -15,11 +15,11 @@ services:
       - postgres:/var/lib/postgresql/data
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: nithwith/odoo:${VERSION}
+    image: nithwith/odoo:${ODOO_VERSION}
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
-      - /home/docker/odoo_addons_community/${VERSION}:/opt/addons_community
+      - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
     command: ./odoo-bin -c /opt/config/odoo.conf --load-language=fr_FR --language=fr_FR -i base -d odoo
     labels:
       - traefik.enable=true
