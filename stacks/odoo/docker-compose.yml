@@ -42,7 +42,7 @@ services:
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
     external_links:
-      - "traefik:${PROJECT_NAME}" #FOR CSS IN REPORTS
+      - traefik:${PROJECT_URL} #FOR CSS IN REPORTS
 
 volumes:
     postgres:
