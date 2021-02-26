@@ -17,7 +17,7 @@ services:
         - "traefik.http.routers.pgadmin4-http.entrypoints=web"
         - "traefik.http.routers.pgadmin4-http.rule=Host(`${PGADMIN_URL}`)"
         - "traefik.http.routers.pgadmin4.entrypoints=websecure"
-        - "traefik.http.routers.pgadmin4.rule=Host(`pgadmin.aymconsultores.es`)"
+        - "traefik.http.routers.pgadmin4.rule=Host(`${PGADMIN_URL}`)"
         - "traefik.http.routers.pgadmin4-http.middlewares=pgadmin4-https@docker"
         - "traefik.http.middlewares.pgadmin4-https.redirectscheme.scheme=https"
         - "traefik.http.routers.pgadmin4.tls=true"
