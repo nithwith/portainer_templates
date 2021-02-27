@@ -38,7 +38,7 @@ services:
 
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
-      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=websecure
     external_links:
       - traefik:${PROJECT_URL} #FOR CSS IN REPORTS
 
