@@ -29,6 +29,16 @@
 				"name": "PROJECT_URL",
 				"label": "Project url",
 				"description": "odoo.yourdomain.com"
+			},
+			{
+				"name": "HTTP_PORT",
+				"label": "Http port",
+				"description": "8069"
+			},
+			{
+				"name": "POLL_PORT",
+				"label": "Poll port",
+				"description": "8072"
 			}]
 		},
 		{
