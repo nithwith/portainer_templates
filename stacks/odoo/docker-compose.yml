@@ -5,7 +5,7 @@ services:
     image: postgres:12.4
     restart: always
     ports:
-      - ${DB_PORT}:5432
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: odoo
       POSTGRES_USER: odoo
@@ -16,6 +16,8 @@ services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
+    links:
+      - ${PROJECT_NAME}_db:${PROJECT_NAME}_db
     ports:
       - ${HTTP_PORT}:8069
       - ${POLL_PORT}:8072
@@ -23,7 +25,7 @@ services:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db --db_port=${DB_PORT} -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}
+    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}
     ulimits:
       nofile:
         soft: 65536
