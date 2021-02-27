@@ -39,13 +39,11 @@ services:
       - traefik.http.routers.${PROJECT_NAME}-websecure.rule=Host(`${PROJECT_URL}`)
       - traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure
-      - traefik.http.routers.${PROJECT_NAME}-websecure.tls.certresolver=le
       - traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=gzip
       - traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=${HTTP_PORT}
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpooling`))
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.service=${PROJECT_NAME}-poll-websecure
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.tls.certresolver=le
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.middlewares=gzip,sslheader
       - traefik.http.services.${PROJECT_NAME}-poll-websecure.loadbalancer.server.port=${POLL_PORT}
       # middlewares
