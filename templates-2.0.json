@@ -39,6 +39,11 @@
 				"name": "POLL_PORT",
 				"label": "Poll port",
 				"description": "8072"
+			},
+			{
+				"name": "DB_PORT",
+				"label": "database port",
+				"description": "5432"
 			}]
 		},
 		{
