@@ -14,11 +14,14 @@ services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
+    ports:
+      - ${HTTP_PORT}:8069
+      - ${POLL_PORT}:8072
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo
+    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}
     ulimits:
       nofile:
         soft: 65536
