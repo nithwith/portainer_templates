@@ -17,7 +17,7 @@ services:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
     links:
-      - ${PROJECT_NAME}_db:${PROJECT_NAME}_db
+      - db:${PROJECT_NAME}_db
     ports:
       - ${HTTP_PORT}:8069
       - ${POLL_PORT}:8072
