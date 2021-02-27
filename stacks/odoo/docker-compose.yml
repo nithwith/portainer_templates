@@ -4,8 +4,6 @@ services:
     container_name: ${PROJECT_NAME}_db
     image: postgres:12.4
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: odoo
       POSTGRES_USER: odoo
