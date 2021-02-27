@@ -14,9 +14,6 @@ services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:${ODOO_VERSION}
-    ports:
-      - "8069:8069"
-      - "8072:8072"
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
