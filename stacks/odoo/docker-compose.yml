@@ -21,7 +21,6 @@ services:
       - ${POLL_PORT}:8072
     volumes:
       - /home/docker/${PROJECT_NAME}/data:/opt/data
-      - /home/docker/${PROJECT_NAME}/config:/opt/config
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/${PROJECT_NAME}/backups:/opt/backups
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
