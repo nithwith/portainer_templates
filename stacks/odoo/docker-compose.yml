@@ -24,7 +24,7 @@ services:
       - /home/docker/${PROJECT_NAME}/addons:/opt/addons
       - /home/docker/${PROJECT_NAME}/backups:/opt/backups
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}
+    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}  --load-language=fr_FR --language=fr_FR
     ulimits:
       nofile:
         soft: 65536
