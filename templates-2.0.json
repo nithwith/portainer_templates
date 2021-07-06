@@ -69,6 +69,27 @@
 				"label": "Pgadmin url",
 				"description": "pgadmin.yourdomain.com"
 			}]
+		},
+		{
+			"type": 3,
+			"title": "Ghost",
+			"description": "Ghost instance",
+			"note": "Deploys your ghost instance.",
+			"categories": [
+				"Monitoring"
+			],
+			"platform": "linux",
+			"logo": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Ghost-Logo.svg",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/ghost/docker-compose.yml"
+			},
+			"env": [
+			{
+				"name": "PROJECT_URL",
+				"label": "Ghost url",
+				"description": "ghost.yourdomain.com"
+			}]
 		}
 	]
 }

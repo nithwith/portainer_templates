@@ -1,0 +1,20 @@
+version: '3'
+services:
+  my_blog:
+    image: ghost:alpine
+    container_name: my_blog
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ghost-websecure.entrypoints=websecure
+      - traefik.http.routers.ghost-websecure.rule=Host(`${PROJECT_URL}`)
+    volumes:
+      - /home/docker/my_blog:/var/lib/ghost/content
+    environment:
+      - NODE_ENV=production
+      - url=https://${PROJECT_URL}
+
+networks:
+  default:
+    external:
+      name: proxy
