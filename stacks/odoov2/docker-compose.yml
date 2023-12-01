@@ -2,8 +2,9 @@ version: '3.1'
 services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: nithwith/odoo:${ODOO_VERSION}
+    image: odoo:${ODOO_VERSION}
     privileged: true
+    user: root
     ulimits:
       nofile:
         soft: 65536
@@ -11,7 +12,7 @@ services:
     ports:
       - ${HTTP_PORT}:8069
       - ${POLL_PORT}:8072
-    command: odoo -c /etc/odoo/myodoo.conf -i base -d ${PROJECT_NAME} 
+    command: odoo -c /etc/odoo/myodoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}  --load-language=fr_FR --language=fr_FR
     volumes:
       - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
       - /home/docker/${PROJECT_NAME}/config:/etc/config
@@ -36,8 +37,18 @@ services:
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=websecure
+  db:
+    container_name: ${PROJECT_NAME}_db
+    image: postgres:15-bullseye
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data-15:/var/lib/postgresql/data/pgdata
 volumes:
-  odoo-web-data:
+  odoo-db-data-15:
   
 networks:
   default:
