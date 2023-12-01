@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: my_n8n
+    restart: always
+    ports:
+      - "127.0.0.1:5678:5678"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.n8n.entrypoints: websecure
+      traefik.http.routers.n8n.rule: Host(`${PROJECT_URL}`)
+    environment:
+      - N8N_HOST=${PROJECT_URL}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
+    external: true
+
+networks:
+  default:
+    external:
+      name: proxy

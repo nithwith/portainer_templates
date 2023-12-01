@@ -111,6 +111,27 @@
 		},
 		{
 			"type": 3,
+			"title": "n8n",
+			"description": "n8n instance",
+			"note": "Deploys your n8n instance.",
+			"categories": [
+				"Automation"
+			],
+			"platform": "linux",
+			"logo": "https://docs.n8n.io/_images/n8n-docs-icon.svg",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/n8n/docker-compose.yml"
+			},
+			"env": [
+			{
+				"name": "PROJECT_URL",
+				"label": "Target URL",
+				"description": "n8n.domain.fr"
+			}]
+		},
+		{
+			"type": 3,
 			"title": "Ghost",
 			"description": "Ghost instance",
 			"note": "Deploys your ghost instance.",
