@@ -42,6 +42,45 @@
 		},
 		{
 			"type": 3,
+			"title": "Odoo v2",
+			"description": "Odoo instance with postgres ",
+			"note": "Deploys your Odoo instance with postgres.",
+			"categories": [
+				"ERP"
+			],
+			"platform": "linux",
+			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+			"repository": {
+				"url": "https://github.com/nithwith/templates",
+				"stackfile": "stacks/odoov2/docker-compose.yml"
+			},
+			"env": [
+			{
+				"name": "PROJECT_NAME",
+				"label": "Project name",
+				"description": "Odoo"
+			},{
+				"name": "PROJECT_URL",
+				"label": "Project url",
+				"description": "odoo.yourdomain.com"
+			},{
+				"name": "ODOO_VERSION",
+				"label": "Odoo version",
+				"description": "12.0"
+			},
+			{
+				"name": "HTTP_PORT",
+				"label": "Http port",
+				"description": "8069"
+			},
+			{
+				"name": "POLL_PORT",
+				"label": "Poll port",
+				"description": "8072"
+			}]
+		},
+		{
+			"type": 3,
 			"title": "Pgadmin",
 			"description": "Pgadmin instance",
 			"note": "Deploys your Pgadmin instance.",

@@ -1,35 +1,33 @@
-version: '3'
+version: '3.1'
 services:
   db:
     container_name: ${PROJECT_NAME}_db
     image: postgres:12.4
-    restart: always
     environment:
-      POSTGRES_PASSWORD: odoo
-      POSTGRES_USER: odoo
-    labels:
-      - traefik.enable=false
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: nithwith/odoo:${ODOO_VERSION}
-    restart: always
+    image: odoo:${ODOO_VERSION}
     links:
       - db:${PROJECT_NAME}_db
-    ports:
-      - ${HTTP_PORT}:8069
-      - ${POLL_PORT}:8072
-    volumes:
-      - /home/docker/${PROJECT_NAME}/data:/opt/data
-      - /home/docker/${PROJECT_NAME}/addons:/opt/addons
-      - /home/docker/${PROJECT_NAME}/backups:/opt/backups
-      - /home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community
-    command: ./odoo-bin -c /opt/config/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}  --load-language=fr_FR --language=fr_FR
+    privileged: true
     ulimits:
       nofile:
         soft: 65536
         hard: 65536
+    ports:
+      - ${HTTP_PORT}:8069
+      - ${POLL_PORT}:8072
+    command: odoo -c /etc/odoo/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT} 
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - /home/docker/{PROJECT_NAME}/addons:/mnt/extra-addons
+      - /home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community
     labels:
       - traefik.enable=true
       - traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)
@@ -49,11 +47,12 @@ services:
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=websecure
-
 volumes:
-    postgres:
-
+  odoo-web-data:
+  odoo-db-data:
+  
 networks:
   default:
     external:
       name: proxy
+
