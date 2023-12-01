@@ -2,17 +2,24 @@ version: '3.1'
 services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: odoo:${ODOO_VERSION}
+    image: nithwith/odoo:17.0
     privileged: true
     user: root
+    environment:
+      HOST: ${PROJECT_NAME}_db
+      USER: odoo      
+      PASSWORD: odoo
+    depends_on:
+      - db
+    tty: true
     ulimits:
       nofile:
         soft: 65536
         hard: 65536
     ports:
       - ${HTTP_PORT}:8069
-      - ${POLL_PORT}:8072
-    command: odoo -c /etc/odoo/myodoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT}  --load-language=fr_FR --language=fr_FR
+      - ${WEBSOCKET_PORT}:8072
+    command: odoo  -i base -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --longpolling-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR
     volumes:
       - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
       - /home/docker/${PROJECT_NAME}/config:/etc/config
@@ -29,11 +36,11 @@ services:
       - traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure
       - traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=gzip
       - traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=${HTTP_PORT}      
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`))
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.entrypoints=websecure
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.service=${PROJECT_NAME}-poll-websecure
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.middlewares=gzip,sslheader
-      - traefik.http.services.${PROJECT_NAME}-poll-websecure.loadbalancer.server.port=${POLL_PORT}
+      - traefik.http.routers.${PROJECT_NAME}-websocket-websecure.rule=Host(`${PROJECT_URL}`) && Path(`/websocket`)
+      - traefik.http.routers.${PROJECT_NAME}-websocket-websecure.entrypoints=websecure
+      - traefik.http.routers.${PROJECT_NAME}-websocket-websecure.service=${PROJECT_NAME}-websocket-websecure
+      - traefik.http.routers.${PROJECT_NAME}-websocket-websecure.middlewares=gzip,sslheader
+      - traefik.http.services.${PROJECT_NAME}-websocket-websecure.loadbalancer.server.port=${WEBSOCKET_PORT}
       # middlewares
       - traefik.http.middlewares.gzip.compress=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=websecure

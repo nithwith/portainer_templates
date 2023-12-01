@@ -43,8 +43,8 @@
 		{
 			"type": 3,
 			"title": "Odoo v2",
-			"description": "Odoo instance with postgres ",
-			"note": "Deploys your Odoo instance with postgres.",
+			"description": "Deploys your Odoo instance (> v17) with postgres (15.0).",
+			"note": "Deploys your Odoo instance (> v17) with postgres (15.0).",
 			"categories": [
 				"ERP"
 			],
@@ -74,8 +74,8 @@
 				"description": "8069"
 			},
 			{
-				"name": "POLL_PORT",
-				"label": "Poll port",
+				"name": "WEBSOCKET_PORT",
+				"label": "Websocket port",
 				"description": "8072"
 			}]
 		},
