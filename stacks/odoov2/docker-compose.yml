@@ -1,19 +1,8 @@
 version: '3.1'
 services:
-  db:
-    container_name: ${PROJECT_NAME}_db
-    image: postgres:12.4
-    environment:
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_USER=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    volumes:
-      - odoo-db-data:/var/lib/postgresql/data/pgdata
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: odoo:${ODOO_VERSION}
-    links:
-      - db:${PROJECT_NAME}_db
+    image: nithwith/odoo:${ODOO_VERSION}
     privileged: true
     ulimits:
       nofile:
@@ -22,11 +11,11 @@ services:
     ports:
       - ${HTTP_PORT}:8069
       - ${POLL_PORT}:8072
-    command: odoo -c /etc/odoo/odoo.conf --db_host=${PROJECT_NAME}_db -i base -d odoo --http-port=${HTTP_PORT} --longpolling-port=${POLL_PORT} 
+    command: odoo -c /etc/odoo/myodoo.conf -i base -d ${PROJECT_NAME} 
     volumes:
-      - odoo-web-data:/var/lib/odoo
-      - ./config:/etc/odoo
-      - /home/docker/{PROJECT_NAME}/addons:/mnt/extra-addons
+      - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
+      - /home/docker/${PROJECT_NAME}/config:/etc/config
+      - /home/docker/${PROJECT_NAME}/addons:/mnt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community
     labels:
       - traefik.enable=true
@@ -38,8 +27,8 @@ services:
       - traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure
       - traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=gzip
-      - traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=${HTTP_PORT}
-      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpooling`))
+      - traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=${HTTP_PORT}      
+      - traefik.http.routers.${PROJECT_NAME}-poll-websecure.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`))
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.service=${PROJECT_NAME}-poll-websecure
       - traefik.http.routers.${PROJECT_NAME}-poll-websecure.middlewares=gzip,sslheader
@@ -49,10 +38,8 @@ services:
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=websecure
 volumes:
   odoo-web-data:
-  odoo-db-data:
   
 networks:
   default:
     external:
       name: proxy
-
