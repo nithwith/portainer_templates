@@ -3,6 +3,7 @@ services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
     image: nithwith/odoo:17.0
+    restart: always
     privileged: true
     user: root
     environment:
@@ -18,7 +19,7 @@ services:
     ports:
       - ${HTTP_PORT}:8069
       - ${WEBSOCKET_PORT}:8072
-    command: odoo  -i base -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --longpolling-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR
+    command: odoo  -i base -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --longpolling-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR --without-demo=True
     volumes:
       - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
       - /home/docker/${PROJECT_NAME}/config:/etc/config
@@ -46,6 +47,7 @@ services:
   db:
     container_name: ${PROJECT_NAME}_db
     image: postgres:15-bullseye
+    restart: always
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
