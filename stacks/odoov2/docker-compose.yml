@@ -19,7 +19,7 @@ services:
     ports:
       - ${HTTP_PORT}:8069
       - ${WEBSOCKET_PORT}:8072
-    command: odoo  -i base -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --longpolling-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR --without-demo=True
+    command: odoo -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --gevent-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR --without-demo=True
     volumes:
       - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
       - /home/docker/${PROJECT_NAME}/addons:/mnt/addons
