@@ -2,7 +2,7 @@ version: '3.1'
 services:
   odoo:
     container_name: ${PROJECT_NAME}_odoo
-    image: nithwith/odoo:17.0
+    image: nithwith/odoo:${ODOO_VERSION}
     restart: always
     privileged: true
     user: root
@@ -22,7 +22,6 @@ services:
     command: odoo  -i base -d odoo -c /etc/odoo/myodoo.conf --http-port=${HTTP_PORT} --longpolling-port=${WEBSOCKET_PORT}  --load-language=fr_FR --language=fr_FR --without-demo=True
     volumes:
       - /home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo
-      - /home/docker/${PROJECT_NAME}/config:/etc/config
       - /home/docker/${PROJECT_NAME}/addons:/mnt/addons
       - /home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community
     labels:
