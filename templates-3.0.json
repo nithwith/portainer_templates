@@ -1,0 +1,45 @@
+{
+  "version": "3",
+  "templates": [
+	{
+      "id": 1,
+      "type": 2,
+      "title": "Odoo",
+      "description": "Odoo",
+      "note": "Odoo instance with postgres.",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/portainer.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/odoo/docker-compose.yml"
+      },
+      "env": [
+			{
+				"name": "PROJECT_NAME",
+				"label": "Project name",
+				"description": "Odoo"
+			},
+			{
+				"name": "PROJECT_URL",
+				"label": "Project url",
+				"description": "odoo.yourdomain.com"
+			},
+			{
+				"name": "ODOO_VERSION",
+				"label": "Odoo version",
+				"description": "12.0"
+			},
+			{
+				"name": "HTTP_PORT",
+				"label": "Http port",
+				"description": "8069"
+			},
+			{
+				"name": "POLL_PORT",
+				"label": "Poll port",
+				"description": "8072"
+			}]
+    }
+]
+}
