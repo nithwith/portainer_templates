@@ -2,7 +2,7 @@
   "version": "3",
   "templates": [
       {
-    "id": 3,
+    "id": 1,
     "type": 3,
     "title": "Odoo - Traefik sans ports publiés",
     "description": "Nouvelle architecture Odoo avec accès uniquement via Traefik.",
@@ -31,7 +31,7 @@
     ]
   },
 	{
-      "id": 1,
+      "id": 2,
       "type": 3,
       "title": "Odoo",
       "description": "Odoo",
