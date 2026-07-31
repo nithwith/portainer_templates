@@ -5,13 +5,13 @@ services:
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: odoo
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: odoo
       PGDATA: /var/lib/postgresql/data/pgdata
 
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
 
     networks:
       - backend
@@ -19,10 +19,10 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - pg_isready -U odoo -d postgres
+        - pg_isready -U odoo -d odoo
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 15
       start_period: 10s
 
     labels:
@@ -49,7 +49,10 @@ services:
       - odoo
       - --config=/etc/odoo/myodoo.conf
       - --database=odoo
+      - --init=base
+      - --load-language=fr_FR
       - --without-demo=all
+      - --no-database-list
 
     ulimits:
       nofile:
@@ -57,31 +60,17 @@ services:
         hard: 65536
 
     volumes:
-      # Configuration Odoo commune à la version.
-      # Le déploiement échoue si le fichier source n'existe pas.
-      - type: bind
-        source: "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf"
-        target: /etc/odoo/myodoo.conf
-        read_only: true
-        bind:
-          create_host_path: false
+      # Filestore géré automatiquement par Docker
+      - odoo-data:/var/lib/odoo
 
-      # Filestore propre à l'instance
-      - type: bind
-        source: "/home/docker/${PROJECT_NAME}/filestore"
-        target: /var/lib/odoo
+      # Configuration commune à toutes les instances de cette version
+      - "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf:/etc/odoo/myodoo.conf:ro"
 
       # Modules spécifiques à l'instance
-      - type: bind
-        source: "/home/docker/${PROJECT_NAME}/addons"
-        target: /mnt/addons
-        read_only: true
+      - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons"
 
-      # Ensemble des dépôts OCA partagés
-      - type: bind
-        source: "/home/docker/odoo_addons_community/${ODOO_VERSION}"
-        target: /mnt/addons_community
-        read_only: true
+      # Dépôts OCA communs
+      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community:ro"
 
     networks:
       - backend
@@ -91,20 +80,20 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 
-      # Route HTTP principale
+      # HTTP
       - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
       - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-http"
       - "traefik.http.services.${PROJECT_NAME}-http.loadbalancer.server.port=8069"
 
-      # Route HTTPS principale
+      # HTTPS
       - "traefik.http.routers.${PROJECT_NAME}-websecure.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure"
       - "traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
       - "traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=8069"
 
-      # WebSocket Odoo récent
+      # WebSocket Odoo 18
       - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.priority=100"
@@ -117,7 +106,8 @@ services:
       - "traefik.http.middlewares.${PROJECT_NAME}-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
 
 volumes:
-  odoo-db-data:
+  db-data:
+  odoo-data:
 
 networks:
   backend:
