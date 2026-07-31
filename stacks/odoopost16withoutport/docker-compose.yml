@@ -1,104 +1,112 @@
 services:
-  db:
-    container_name: "${PROJECT_NAME}_db"
-    image: postgres:12.4
-    restart: always
-
-    environment:
-      POSTGRES_DB: odoo
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-
-    volumes:
-      - postgres:/var/lib/postgresql/data
-
-    networks:
-      - backend
-
-    labels:
-      - "traefik.enable=false"
-
   odoo:
     container_name: "${PROJECT_NAME}_odoo"
     image: "nithwith/odoo:${ODOO_VERSION}"
-    restart: always
+    restart: unless-stopped
 
     depends_on:
       - db
 
-    # Ports internes uniquement.
-    # Aucun port n'est publié sur le serveur Ubuntu.
-    expose:
-      - "8069"
-      - "8072"
+    environment:
+      HOST: db
+      PORT: "5432"
+      USER: odoo
+      PASSWORD: odoo
 
-    volumes:
-      - "/home/docker/${PROJECT_NAME}/data:/opt/data"
-      - "/home/docker/${PROJECT_NAME}/addons:/opt/addons"
-      - "/home/docker/${PROJECT_NAME}/backups:/opt/backups"
-      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community"
-
-    command: >
-      ./odoo-bin
-      -c /opt/config/odoo.conf
-      --db_host=db
-      --db_port=5432
-      --db_user=odoo
-      --db_password=odoo
-      -i base
-      -d odoo
-      --http-port=8069
-      --proxy-mode
-      --load-language=fr_FR
-      --language=fr_FR
+    command:
+      - odoo
+      - -d odoo
+      - -c /etc/odoo/myodoo.conf
+      - --http-port=8069
+      - --gevent-port=8072
+      - --proxy-mode
+      - --load-language=fr_FR
+      - --language=fr_FR
+      - --without-demo=all
 
     ulimits:
       nofile:
         soft: 65536
         hard: 65536
 
+    volumes:
+      - "/home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo"
+      - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons"
+      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community"
+
     networks:
-      - proxy
       - backend
+      - proxy
 
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 
-      # HTTP principal
+      # Redirection HTTP vers HTTPS
       - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
-      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-http"
-      - "traefik.http.services.${PROJECT_NAME}-http.loadbalancer.server.port=8069"
+      - "traefik.http.routers.${PROJECT_NAME}-http.middlewares=${PROJECT_NAME}-redirect-https"
+      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-odoo"
 
-      # HTTPS principal
-      - "traefik.http.routers.${PROJECT_NAME}-websecure.rule=Host(`${PROJECT_URL}`)"
-      - "traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
-      - "traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=8069"
+      - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.permanent=true"
 
-      # Notifications temps réel :
-      # /longpolling pour les anciennes versions
-      # /websocket pour les versions récentes
-      - "traefik.http.routers.${PROJECT_NAME}-events.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`) || PathPrefix(`/websocket`))"
-      - "traefik.http.routers.${PROJECT_NAME}-events.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-events.priority=100"
-      - "traefik.http.routers.${PROJECT_NAME}-events.service=${PROJECT_NAME}-events"
-      - "traefik.http.routers.${PROJECT_NAME}-events.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
-      - "traefik.http.services.${PROJECT_NAME}-events.loadbalancer.server.port=8072"
+      # Interface principale Odoo
+      - "traefik.http.routers.${PROJECT_NAME}-https.rule=Host(`${PROJECT_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-https.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-https.tls=true"
+      - "traefik.http.routers.${PROJECT_NAME}-https.service=${PROJECT_NAME}-odoo"
+      - "traefik.http.routers.${PROJECT_NAME}-https.middlewares=${PROJECT_NAME}-compress"
 
-      # Middlewares propres à cette instance
-      - "traefik.http.middlewares.${PROJECT_NAME}-gzip.compress=true"
-      - "traefik.http.middlewares.${PROJECT_NAME}-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.services.${PROJECT_NAME}-odoo.loadbalancer.server.port=8069"
+
+      # WebSocket / bus Odoo
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.tls=true"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.priority=100"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.service=${PROJECT_NAME}-websocket"
+
+      - "traefik.http.services.${PROJECT_NAME}-websocket.loadbalancer.server.port=8072"
+
+      # Compression HTTP
+      - "traefik.http.middlewares.${PROJECT_NAME}-compress.compress=true"
+
+  db:
+    container_name: "${PROJECT_NAME}_db"
+    image: postgres:15-bullseye
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+
+    networks:
+      - backend
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U odoo -d postgres
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    labels:
+      - "traefik.enable=false"
 
 volumes:
-  postgres:
+  odoo-db-data:
 
 networks:
+  backend:
+    internal: true
+
   proxy:
     external: true
     name: proxy
-
-  backend:
-    internal: true
