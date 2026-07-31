@@ -1,0 +1,104 @@
+services:
+  db:
+    container_name: "${PROJECT_NAME}_db"
+    image: postgres:12.4
+    restart: always
+
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+    networks:
+      - backend
+
+    labels:
+      - "traefik.enable=false"
+
+  odoo:
+    container_name: "${PROJECT_NAME}_odoo"
+    image: "nithwith/odoo:${ODOO_VERSION}"
+    restart: always
+
+    depends_on:
+      - db
+
+    # Ports internes uniquement.
+    # Aucun port n'est publié sur le serveur Ubuntu.
+    expose:
+      - "8069"
+      - "8072"
+
+    volumes:
+      - "/home/docker/${PROJECT_NAME}/data:/opt/data"
+      - "/home/docker/${PROJECT_NAME}/addons:/opt/addons"
+      - "/home/docker/${PROJECT_NAME}/backups:/opt/backups"
+      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/opt/addons_community"
+
+    command: >
+      ./odoo-bin
+      -c /opt/config/odoo.conf
+      --db_host=db
+      --db_port=5432
+      --db_user=odoo
+      --db_password=odoo
+      -i base
+      -d odoo
+      --http-port=8069
+      --proxy-mode
+      --load-language=fr_FR
+      --language=fr_FR
+
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
+    networks:
+      - proxy
+      - backend
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      # HTTP principal
+      - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
+      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-http"
+      - "traefik.http.services.${PROJECT_NAME}-http.loadbalancer.server.port=8069"
+
+      # HTTPS principal
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.rule=Host(`${PROJECT_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
+      - "traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=8069"
+
+      # Notifications temps réel :
+      # /longpolling pour les anciennes versions
+      # /websocket pour les versions récentes
+      - "traefik.http.routers.${PROJECT_NAME}-events.rule=Host(`${PROJECT_URL}`) && (PathPrefix(`/longpolling`) || PathPrefix(`/websocket`))"
+      - "traefik.http.routers.${PROJECT_NAME}-events.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-events.priority=100"
+      - "traefik.http.routers.${PROJECT_NAME}-events.service=${PROJECT_NAME}-events"
+      - "traefik.http.routers.${PROJECT_NAME}-events.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
+      - "traefik.http.services.${PROJECT_NAME}-events.loadbalancer.server.port=8072"
+
+      # Middlewares propres à cette instance
+      - "traefik.http.middlewares.${PROJECT_NAME}-gzip.compress=true"
+      - "traefik.http.middlewares.${PROJECT_NAME}-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+
+volumes:
+  postgres:
+
+networks:
+  proxy:
+    external: true
+    name: proxy
+
+  backend:
+    internal: true

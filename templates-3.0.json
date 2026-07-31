@@ -1,6 +1,35 @@
 {
   "version": "3",
   "templates": [
+      {
+    "id": 3,
+    "type": 3,
+    "title": "Odoo - Traefik sans ports publiés",
+    "description": "Nouvelle architecture Odoo avec accès uniquement via Traefik.",
+    "categories": ["ERP"],
+    "platform": "linux",
+    "repository": {
+      "url": "https://github.com/nithwith/portainer_templates",
+      "stackfile": "stacks/odoopost16withoutport/docker-compose.yml"
+    },
+    "env": [
+      {
+        "name": "PROJECT_NAME",
+        "label": "Project name",
+        "description": "odoo-client"
+      },
+      {
+        "name": "PROJECT_URL",
+        "label": "Project URL",
+        "description": "odoo.example.org"
+      },
+      {
+        "name": "ODOO_VERSION",
+        "label": "Odoo version",
+        "description": "18.0"
+      }
+    ]
+  },
 	{
       "id": 1,
       "type": 3,
@@ -12,7 +41,7 @@
       "logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/portainer.png",
       "repository": {
         "url": "https://github.com/nithwith/templates",
-        "stackfile": "stacks/odoo/docker-compose.yml"
+        "stackfile": "stacks/odoopost16/docker-compose.yml"
       },
       "env": [
 			{
