@@ -1,77 +1,4 @@
 services:
-  odoo:
-    container_name: "${PROJECT_NAME}_odoo"
-    image: "nithwith/odoo:${ODOO_VERSION}"
-    restart: unless-stopped
-
-    depends_on:
-      - db
-
-    environment:
-      HOST: db
-      PORT: "5432"
-      USER: odoo
-      PASSWORD: odoo
-
-    command:
-      - odoo
-      - -d odoo
-      - -c /etc/odoo/myodoo.conf
-      - --http-port=8069
-      - --gevent-port=8072
-      - --proxy-mode
-      - --load-language=fr_FR
-      - --language=fr_FR
-      - --without-demo=all
-
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-
-    volumes:
-      - "/home/docker/${PROJECT_NAME}/filestore:/var/lib/odoo"
-      - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons"
-      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community"
-
-    networks:
-      - backend
-      - proxy
-
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-
-      # Redirection HTTP vers HTTPS
-      - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
-      - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
-      - "traefik.http.routers.${PROJECT_NAME}-http.middlewares=${PROJECT_NAME}-redirect-https"
-      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-odoo"
-
-      - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.permanent=true"
-
-      # Interface principale Odoo
-      - "traefik.http.routers.${PROJECT_NAME}-https.rule=Host(`${PROJECT_URL}`)"
-      - "traefik.http.routers.${PROJECT_NAME}-https.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-https.tls=true"
-      - "traefik.http.routers.${PROJECT_NAME}-https.service=${PROJECT_NAME}-odoo"
-      - "traefik.http.routers.${PROJECT_NAME}-https.middlewares=${PROJECT_NAME}-compress"
-
-      - "traefik.http.services.${PROJECT_NAME}-odoo.loadbalancer.server.port=8069"
-
-      # WebSocket / bus Odoo
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.tls=true"
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.priority=100"
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.service=${PROJECT_NAME}-websocket"
-
-      - "traefik.http.services.${PROJECT_NAME}-websocket.loadbalancer.server.port=8072"
-
-      # Compression HTTP
-      - "traefik.http.middlewares.${PROJECT_NAME}-compress.compress=true"
-
   db:
     container_name: "${PROJECT_NAME}_db"
     image: postgres:15-bullseye
@@ -96,9 +23,98 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
     labels:
       - "traefik.enable=false"
+
+  odoo:
+    container_name: "${PROJECT_NAME}_odoo"
+    image: "nithwith/odoo:${ODOO_VERSION}"
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      HOST: db
+      PORT: "5432"
+      USER: odoo
+      PASSWORD: odoo
+      ODOO_RC: /etc/odoo/myodoo.conf
+
+    command:
+      - odoo
+      - --config=/etc/odoo/myodoo.conf
+      - --database=odoo
+      - --without-demo=all
+
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
+    volumes:
+      # Configuration Odoo commune à la version.
+      # Le déploiement échoue si le fichier source n'existe pas.
+      - type: bind
+        source: "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf"
+        target: /etc/odoo/myodoo.conf
+        read_only: true
+        bind:
+          create_host_path: false
+
+      # Filestore propre à l'instance
+      - type: bind
+        source: "/home/docker/${PROJECT_NAME}/filestore"
+        target: /var/lib/odoo
+
+      # Modules spécifiques à l'instance
+      - type: bind
+        source: "/home/docker/${PROJECT_NAME}/addons"
+        target: /mnt/addons
+        read_only: true
+
+      # Ensemble des dépôts OCA partagés
+      - type: bind
+        source: "/home/docker/odoo_addons_community/${ODOO_VERSION}"
+        target: /mnt/addons_community
+        read_only: true
+
+    networks:
+      - backend
+      - proxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      # Route HTTP principale
+      - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
+      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-http"
+      - "traefik.http.services.${PROJECT_NAME}-http.loadbalancer.server.port=8069"
+
+      # Route HTTPS principale
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.rule=Host(`${PROJECT_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.service=${PROJECT_NAME}-websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websecure.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
+      - "traefik.http.services.${PROJECT_NAME}-websecure.loadbalancer.server.port=8069"
+
+      # WebSocket Odoo récent
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.priority=100"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.service=${PROJECT_NAME}-websocket"
+      - "traefik.http.routers.${PROJECT_NAME}-websocket.middlewares=${PROJECT_NAME}-gzip,${PROJECT_NAME}-sslheader"
+      - "traefik.http.services.${PROJECT_NAME}-websocket.loadbalancer.server.port=8072"
+
+      # Middlewares propres à l'instance
+      - "traefik.http.middlewares.${PROJECT_NAME}-gzip.compress=true"
+      - "traefik.http.middlewares.${PROJECT_NAME}-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
 
 volumes:
   odoo-db-data:
