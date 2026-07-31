@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: odoo
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: odoo
       PGDATA: /var/lib/postgresql/data/pgdata
@@ -17,6 +17,15 @@ services:
 
     networks:
       - backend
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U odoo -d odoo
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
 
     labels:
       - "traefik.enable=false"
@@ -28,7 +37,8 @@ services:
     stop_grace_period: 60s
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
     environment:
       HOST: db
@@ -37,7 +47,10 @@ services:
       PASSWORD: odoo
       ODOO_RC: /etc/odoo/myodoo.conf
 
-    command: odoo --config=/etc/odoo/myodoo.conf
+    command:
+      - odoo
+      - --config=/etc/odoo/myodoo.conf
+      - --database=odoo
 
     ulimits:
       nofile:
@@ -45,18 +58,9 @@ services:
         hard: 65536
 
     volumes:
-      # Filestore dans un volume Docker :
-      # aucun problème de droits sur un dossier hôte.
       - odoo-data:/var/lib/odoo
-
-      # Configuration partagée par toutes les instances Odoo 18.
       - "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf:/etc/odoo/myodoo.conf:ro"
-
-      # Modules propres à l’instance.
-      # Docker crée automatiquement le dossier s’il n’existe pas.
       - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons:ro"
-
-      # Dépôts OCA partagés.
       - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community:ro"
 
     networks:
@@ -67,16 +71,16 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 
-      # HTTP vers HTTPS
+      # HTTP -> HTTPS
       - "traefik.http.routers.${PROJECT_NAME}-http.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-http.entrypoints=web"
       - "traefik.http.routers.${PROJECT_NAME}-http.middlewares=${PROJECT_NAME}-redirect-https"
-      - "traefik.http.routers.${PROJECT_NAME}-http.service=${PROJECT_NAME}-odoo"
+      - "traefik.http.routers.${PROJECT_NAME}-http.service=noop@internal"
 
       - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.permanent=true"
 
-      # Interface principale Odoo en HTTPS
+      # Odoo principal
       - "traefik.http.routers.${PROJECT_NAME}-https.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-https.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-https.tls=true"
@@ -85,7 +89,7 @@ services:
 
       - "traefik.http.services.${PROJECT_NAME}-odoo.loadbalancer.server.port=8069"
 
-      # WebSocket Odoo
+      # WebSocket / bus Odoo
       - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.tls=true"
@@ -99,7 +103,10 @@ services:
 
 volumes:
   db-data:
+    name: "${PROJECT_NAME}_db_data"
+
   odoo-data:
+    name: "${PROJECT_NAME}_odoo_data"
 
 networks:
   backend:
