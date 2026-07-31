@@ -50,7 +50,6 @@ services:
     command:
       - odoo
       - --config=/etc/odoo/myodoo.conf
-      - --database=odoo
 
     ulimits:
       nofile:
