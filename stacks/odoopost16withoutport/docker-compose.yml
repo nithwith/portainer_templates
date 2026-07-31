@@ -37,9 +37,7 @@ services:
       PASSWORD: odoo
       ODOO_RC: /etc/odoo/myodoo.conf
 
-    command:
-      - odoo -d odoo -i base
-      - --config=/etc/odoo/myodoo.conf
+    command: odoo -d odoo -i base --config=/etc/odoo/myodoo.conf
 
     ulimits:
       nofile:
