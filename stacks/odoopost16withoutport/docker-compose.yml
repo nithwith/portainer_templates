@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   db:
     container_name: "${PROJECT_NAME}_db"
@@ -5,110 +7,13 @@ services:
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: odoo
+      POSTGRES_DB: postgres
       POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: "${DB_PASSWORD:-odoo}"
+      POSTGRES_PASSWORD: odoo
       PGDATA: /var/lib/postgresql/data/pgdata
 
     volumes:
       - db-data:/var/lib/postgresql/data
-
-    networks:
-      - backend
-
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U odoo -d odoo
-      interval: 10s
-      timeout: 5s
-      retries: 15
-      start_period: 10s
-
-    labels:
-      - "traefik.enable=false"
-
-  odoo-init:
-    container_name: "${PROJECT_NAME}_odoo_init"
-    image: "nithwith/odoo:${ODOO_VERSION}"
-    restart: "no"
-
-    depends_on:
-      db:
-        condition: service_healthy
-
-    environment:
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_NAME: odoo
-      DB_USER: odoo
-      DB_PASSWORD: "${DB_PASSWORD:-odoo}"
-      ODOO_RC: /etc/odoo/myodoo.conf
-
-    entrypoint:
-      - /bin/bash
-      - -ec
-
-    command: |
-      INITIALIZED="$$(PGPASSWORD="$${DB_PASSWORD}" psql \
-        --host="$${DB_HOST}" \
-        --port="$${DB_PORT}" \
-        --username="$${DB_USER}" \
-        --dbname="$${DB_NAME}" \
-        --tuples-only \
-        --no-align \
-        --command="SELECT to_regclass('public.ir_module_module') IS NOT NULL;")"
-
-      if [ "$${INITIALIZED}" != "t" ]; then
-        echo "Initialisation de la base Odoo en français..."
-
-        odoo \
-          --config="$${ODOO_RC}" \
-          --database="$${DB_NAME}" \
-          --db_host="$${DB_HOST}" \
-          --db_port="$${DB_PORT}" \
-          --db_user="$${DB_USER}" \
-          --db_password="$${DB_PASSWORD}" \
-          --init=base \
-          --load-language=fr_FR \
-          --without-demo=all \
-          --stop-after-init
-
-        echo "Application de la langue française aux utilisateurs principaux..."
-
-        cat <<'PYTHON' | odoo shell \
-          --config="$${ODOO_RC}" \
-          --database="$${DB_NAME}" \
-          --db_host="$${DB_HOST}" \
-          --db_port="$${DB_PORT}" \
-          --db_user="$${DB_USER}" \
-          --db_password="$${DB_PASSWORD}"
-
-      admin = env.ref("base.user_admin", raise_if_not_found=False)
-      public = env.ref("base.public_user", raise_if_not_found=False)
-
-      if admin:
-          admin.write({"lang": "fr_FR"})
-
-      if public:
-          public.write({"lang": "fr_FR"})
-
-      env.cr.commit()
-      PYTHON
-
-        echo "Initialisation terminée."
-      else
-        echo "Base déjà initialisée : aucune réinitialisation."
-      fi
-
-    volumes:
-      - odoo-data:/var/lib/odoo
-
-      - "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf:/etc/odoo/myodoo.conf:ro"
-
-      - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons:ro"
-
-      - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community:ro"
 
     networks:
       - backend
@@ -120,28 +25,21 @@ services:
     container_name: "${PROJECT_NAME}_odoo"
     image: "nithwith/odoo:${ODOO_VERSION}"
     restart: unless-stopped
-    init: true
     stop_grace_period: 60s
 
     depends_on:
-      db:
-        condition: service_healthy
-
-      odoo-init:
-        condition: service_completed_successfully
+      - db
 
     environment:
       HOST: db
       PORT: "5432"
       USER: odoo
-      PASSWORD: "${DB_PASSWORD:-odoo}"
+      PASSWORD: odoo
       ODOO_RC: /etc/odoo/myodoo.conf
 
     command:
-      - odoo
+      - odoo -d odoo -i base
       - --config=/etc/odoo/myodoo.conf
-      - --database=odoo
-      - --no-database-list
 
     ulimits:
       nofile:
@@ -149,16 +47,18 @@ services:
         hard: 65536
 
     volumes:
-      # Filestore géré par Docker : aucun problème de droits sur l’hôte.
+      # Filestore dans un volume Docker :
+      # aucun problème de droits sur un dossier hôte.
       - odoo-data:/var/lib/odoo
 
-      # Configuration mutualisée par version.
+      # Configuration partagée par toutes les instances Odoo 18.
       - "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf:/etc/odoo/myodoo.conf:ro"
 
-      # Modules spécifiques à l’instance.
+      # Modules propres à l’instance.
+      # Docker crée automatiquement le dossier s’il n’existe pas.
       - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons:ro"
 
-      # Dépôts OCA mutualisés.
+      # Dépôts OCA partagés.
       - "/home/docker/odoo_addons_community/${ODOO_VERSION}:/mnt/addons_community:ro"
 
     networks:
@@ -178,7 +78,7 @@ services:
       - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.${PROJECT_NAME}-redirect-https.redirectscheme.permanent=true"
 
-      # Interface principale Odoo
+      # Interface principale Odoo en HTTPS
       - "traefik.http.routers.${PROJECT_NAME}-https.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-https.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-https.tls=true"
@@ -201,10 +101,7 @@ services:
 
 volumes:
   db-data:
-    name: "${PROJECT_NAME}_db_data"
-
   odoo-data:
-    name: "${PROJECT_NAME}_odoo_data"
 
 networks:
   backend:
