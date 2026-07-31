@@ -3,7 +3,7 @@
   "templates": [
 	{
       "id": 1,
-      "type": 2,
+      "type": 3,
       "title": "Odoo",
       "description": "Odoo",
       "note": "Odoo instance with postgres.",
@@ -43,7 +43,7 @@
     },
 	{
       "id": 22,
-      "type": 2,
+      "type": 3,
       "title": "Swarm monitoring",
       "description": "Monitor your cluster performances with Prometheus & Grafana",
       "note": "Requires Docker version 19.03.0+. <b>Make sure to add the <code>monitoring == true</code> one of your Swarm manager node before deploying this stack.</b>",
