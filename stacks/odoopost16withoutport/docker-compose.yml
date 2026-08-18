@@ -60,9 +60,6 @@ services:
       # Filestore dédié à cette instance
       - odoo-data:/var/lib/odoo
 
-      # Configuration Odoo partagée par version
-      - "/home/docker/odoo_config/${ODOO_VERSION}/myodoo.conf:/etc/odoo/myodoo.conf:ro"
-
       # Addons spécifiques à cette instance
       - "/home/docker/${PROJECT_NAME}/addons:/mnt/addons:ro"
 
