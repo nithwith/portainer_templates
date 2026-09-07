@@ -77,7 +77,6 @@ services:
       # Odoo principal en HTTPS
       - "traefik.http.routers.${PROJECT_NAME}-https.rule=Host(`${PROJECT_URL}`)"
       - "traefik.http.routers.${PROJECT_NAME}-https.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-https.tls=true"
       - "traefik.http.routers.${PROJECT_NAME}-https.service=${PROJECT_NAME}-odoo"
       - "traefik.http.routers.${PROJECT_NAME}-https.middlewares=${PROJECT_NAME}-compress"
 
@@ -86,7 +85,6 @@ services:
       # WebSocket / bus Odoo
       - "traefik.http.routers.${PROJECT_NAME}-websocket.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/websocket`)"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.entrypoints=websecure"
-      - "traefik.http.routers.${PROJECT_NAME}-websocket.tls=true"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.priority=100"
       - "traefik.http.routers.${PROJECT_NAME}-websocket.service=${PROJECT_NAME}-websocket"
 
