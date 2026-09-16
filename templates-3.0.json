@@ -1,36 +1,76 @@
 {
   "version": "3",
   "templates": [
-      {
-    "id": 1,
-    "type": 3,
-    "title": "Odoo - Traefik sans ports publiés",
-    "description": "Nouvelle architecture Odoo avec accès uniquement via Traefik.",
-    "categories": ["ERP"],
-    "platform": "linux",
-    "repository": {
-      "url": "https://github.com/nithwith/portainer_templates",
-      "stackfile": "stacks/odoopost16withoutport/docker-compose.yml"
+    {
+      "type": 3,
+      "title": "Odoo with port pré 16",
+      "description": "Odoo instance with postgres ",
+      "note": "Deploys your Odoo instance with postgres.",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/odoo12-16/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "Odoo"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project url",
+          "description": "odoo.yourdomain.com"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "12.0"
+        },
+        {
+          "name": "HTTP_PORT",
+          "label": "Http port",
+          "description": "8069"
+        },
+        {
+          "name": "POLL_PORT",
+          "label": "Poll port",
+          "description": "8072"
+        }
+      ]
     },
-    "env": [
-      {
-        "name": "PROJECT_NAME",
-        "label": "Project name",
-        "description": "odoo-client"
+    {
+      "id": 1,
+      "type": 3,
+      "title": "Odoo - Traefik sans ports publiés",
+      "description": "Nouvelle architecture Odoo avec accès uniquement via Traefik.",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "repository": {
+        "url": "https://github.com/nithwith/portainer_templates",
+        "stackfile": "stacks/odoopost16withoutport/docker-compose.yml"
       },
-      {
-        "name": "PROJECT_URL",
-        "label": "Project URL",
-        "description": "odoo.example.org"
-      },
-      {
-        "name": "ODOO_VERSION",
-        "label": "Odoo version",
-        "description": "18.0"
-      }
-    ]
-  },
-	{
+      "env": [
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "odoo-client"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project URL",
+          "description": "odoo.example.org"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "18.0"
+        }
+      ]
+    },
+    {
       "id": 2,
       "type": 3,
       "title": "Odoo",
@@ -44,33 +84,34 @@
         "stackfile": "stacks/odoopost16/docker-compose.yml"
       },
       "env": [
-			{
-				"name": "PROJECT_NAME",
-				"label": "Project name",
-				"description": "Odoo"
-			},
-			{
-				"name": "PROJECT_URL",
-				"label": "Project url",
-				"description": "odoo.yourdomain.com"
-			},
-			{
-				"name": "ODOO_VERSION",
-				"label": "Odoo version",
-				"description": "12.0"
-			},
-			{
-				"name": "HTTP_PORT",
-				"label": "Http port",
-				"description": "8069"
-			},
-			{
-				"name": "POLL_PORT",
-				"label": "Poll port",
-				"description": "8072"
-			}]
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "Odoo"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project url",
+          "description": "odoo.yourdomain.com"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "12.0"
+        },
+        {
+          "name": "HTTP_PORT",
+          "label": "Http port",
+          "description": "8069"
+        },
+        {
+          "name": "POLL_PORT",
+          "label": "Poll port",
+          "description": "8072"
+        }
+      ]
     },
-	{
+    {
       "id": 22,
       "type": 3,
       "title": "Swarm monitoring",
@@ -95,5 +136,5 @@
         }
       ]
     }
-]
+  ]
 }
