@@ -1,155 +1,195 @@
 {
-	"version": "2",
-	"templates": [
-		{
-			"type": 3,
-			"title": "Odoo",
-			"description": "Odoo instance with postgres ",
-			"note": "Deploys your Odoo instance with postgres.",
-			"categories": [
-				"ERP"
-			],
-			"platform": "linux",
-			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/odoo/docker-compose.yml"
-			},
-			"env": [
-			{
-				"name": "PROJECT_NAME",
-				"label": "Project name",
-				"description": "Odoo"
-			},{
-				"name": "PROJECT_URL",
-				"label": "Project url",
-				"description": "odoo.yourdomain.com"
-			},{
-				"name": "ODOO_VERSION",
-				"label": "Odoo version",
-				"description": "12.0"
-			},
-			{
-				"name": "HTTP_PORT",
-				"label": "Http port",
-				"description": "8069"
-			},
-			{
-				"name": "POLL_PORT",
-				"label": "Poll port",
-				"description": "8072"
-			}]
-		},
-		{
-			"type": 3,
-			"title": "Odoo v2",
-			"description": "Deploys your Odoo instance (> v17) with postgres (15.0).",
-			"note": "Deploys your Odoo instance (> v17) with postgres (15.0).",
-			"categories": [
-				"ERP"
-			],
-			"platform": "linux",
-			"logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/odoov2/docker-compose.yml"
-			},
-			"env": [
-			{
-				"name": "PROJECT_NAME",
-				"label": "Project name",
-				"description": "Odoo"
-			},{
-				"name": "PROJECT_URL",
-				"label": "Project url",
-				"description": "odoo.yourdomain.com"
-			},{
-				"name": "ODOO_VERSION",
-				"label": "Odoo version",
-				"description": "12.0"
-			},
-			{
-				"name": "HTTP_PORT",
-				"label": "Http port",
-				"description": "8069"
-			},
-			{
-				"name": "WEBSOCKET_PORT",
-				"label": "Websocket port",
-				"description": "8072"
-			}]
-		},
-		{
-			"type": 3,
-			"title": "Pgadmin",
-			"description": "Pgadmin instance",
-			"note": "Deploys your Pgadmin instance.",
-			"categories": [
-				"Monitoring"
-			],
-			"platform": "linux",
-			"logo": "https://www.todopostgresql.com/wp-content/uploads/2018/08/cursoPgAdmin4.png",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/pgadmin/docker-compose.yml"
-			},
-			"env": [{
-				"name": "PGADMIN_USER",
-				"label": "Pgadmin user",
-				"description": "admin"
-			},
-			{
-				"name": "PGADMIN_PASSWORD",
-				"label": "Pgadmin password",
-				"description": "admin"
-			},
-			{
-				"name": "PGADMIN_URL",
-				"label": "Pgadmin url",
-				"description": "pgadmin.yourdomain.com"
-			}]
-		},
-		{
-			"type": 3,
-			"title": "n8n",
-			"description": "n8n instance",
-			"note": "Deploys your n8n instance.",
-			"categories": [
-				"Automation"
-			],
-			"platform": "linux",
-			"logo": "https://docs.n8n.io/_images/n8n-docs-icon.svg",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/n8n/docker-compose.yml"
-			},
-			"env": [
-			{
-				"name": "PROJECT_URL",
-				"label": "Target URL",
-				"description": "n8n.domain.fr"
-			}]
-		},
-		{
-			"type": 3,
-			"title": "Ghost",
-			"description": "Ghost instance",
-			"note": "Deploys your ghost instance.",
-			"categories": [
-				"Monitoring"
-			],
-			"platform": "linux",
-			"logo": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Ghost-Logo.svg",
-			"repository": {
-				"url": "https://github.com/nithwith/templates",
-				"stackfile": "stacks/ghost/docker-compose.yml"
-			},
-			"env": [
-			{
-				"name": "PROJECT_URL",
-				"label": "Ghost url",
-				"description": "ghost.yourdomain.com"
-			}]
-		}
-	]
+  "version": "2",
+  "templates": [
+    {
+      "type": 3,
+      "title": "Odoo with port pré 16",
+      "description": "Odoo instance with postgres ",
+      "note": "Deploys your Odoo instance with postgres.",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/odoo12-16/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "Odoo"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project url",
+          "description": "odoo.yourdomain.com"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "12.0"
+        },
+        {
+          "name": "HTTP_PORT",
+          "label": "Http port",
+          "description": "8069"
+        },
+        {
+          "name": "POLL_PORT",
+          "label": "Poll port",
+          "description": "8072"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "Odoo with port post 16",
+      "description": "Odoo instance with postgres ",
+      "note": "Deploys your Odoo instance with postgres.",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/odoopost16/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "Odoo"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project url",
+          "description": "odoo.yourdomain.com"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "12.0"
+        },
+        {
+          "name": "HTTP_PORT",
+          "label": "Http port",
+          "description": "8069"
+        },
+        {
+          "name": "POLL_PORT",
+          "label": "Poll port",
+          "description": "8072"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "Odoo without port",
+      "description": "Deploys your Odoo instance (> v17) with postgres (15.0).",
+      "note": "Deploys your Odoo instance (> v17) with postgres (15.0).",
+      "categories": ["ERP"],
+      "platform": "linux",
+      "logo": "https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_logo.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/odoov2/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_NAME",
+          "label": "Project name",
+          "description": "Odoo"
+        },
+        {
+          "name": "PROJECT_URL",
+          "label": "Project url",
+          "description": "odoo.yourdomain.com"
+        },
+        {
+          "name": "ODOO_VERSION",
+          "label": "Odoo version",
+          "description": "12.0"
+        },
+        {
+          "name": "HTTP_PORT",
+          "label": "Http port",
+          "description": "8069"
+        },
+        {
+          "name": "WEBSOCKET_PORT",
+          "label": "Websocket port",
+          "description": "8072"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "Pgadmin",
+      "description": "Pgadmin instance",
+      "note": "Deploys your Pgadmin instance.",
+      "categories": ["Monitoring"],
+      "platform": "linux",
+      "logo": "https://www.todopostgresql.com/wp-content/uploads/2018/08/cursoPgAdmin4.png",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/pgadmin/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PGADMIN_USER",
+          "label": "Pgadmin user",
+          "description": "admin"
+        },
+        {
+          "name": "PGADMIN_PASSWORD",
+          "label": "Pgadmin password",
+          "description": "admin"
+        },
+        {
+          "name": "PGADMIN_URL",
+          "label": "Pgadmin url",
+          "description": "pgadmin.yourdomain.com"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "n8n",
+      "description": "n8n instance",
+      "note": "Deploys your n8n instance.",
+      "categories": ["Automation"],
+      "platform": "linux",
+      "logo": "https://docs.n8n.io/_images/n8n-docs-icon.svg",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/n8n/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_URL",
+          "label": "Target URL",
+          "description": "n8n.domain.fr"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "Ghost",
+      "description": "Ghost instance",
+      "note": "Deploys your ghost instance.",
+      "categories": ["Monitoring"],
+      "platform": "linux",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Ghost-Logo.svg",
+      "repository": {
+        "url": "https://github.com/nithwith/templates",
+        "stackfile": "stacks/ghost/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "PROJECT_URL",
+          "label": "Ghost url",
+          "description": "ghost.yourdomain.com"
+        }
+      ]
+    }
+  ]
 }
