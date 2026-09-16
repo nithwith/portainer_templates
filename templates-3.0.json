@@ -2,6 +2,7 @@
   "version": "3",
   "templates": [
     {
+      "id": 4,
       "type": 3,
       "title": "Odoo with port pré 16",
       "description": "Odoo instance with postgres ",
